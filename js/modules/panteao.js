@@ -48,7 +48,7 @@ import { sessaoLiberada } from '../state.js';
  * módulo, e uma const usada antes da própria linha de declaração quebra
  * com ReferenceError (temporal dead zone).
  */
-const URL_BACKEND = 'http://localhost:3000';
+const URL_BACKEND = 'https://san-humano.onrender.com';
 
 /* ==================================================================
    1. AGENTES — único lugar a editar para renomear

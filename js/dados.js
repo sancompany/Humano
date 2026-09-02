@@ -28,7 +28,7 @@ import { bancoPorCodigo } from './bancos.js';
 // não o backend "fora do ar", que fazia tudo cair pro .OFX até aqui).
 // Usa o mesmo hostname da página (127.0.0.1 ou localhost, o que for) e só
 // troca a porta — funciona nos dois nomes sem precisar configurar nada.
-const BASE_API = `${window.location.protocol}//${window.location.hostname}:3000/api`;
+const BASE_API = `https://san-humano.onrender.com`;
 const TIMEOUT_MS = 8000;
 
 /* ==================================================================
