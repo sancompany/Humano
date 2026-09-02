@@ -1,0 +1,5 @@
+# SAN & CO. — backend/.gitignore
+# A linha mais importante deste arquivo é a primeira.
+.env
+node_modules/
+npm-debug.log*

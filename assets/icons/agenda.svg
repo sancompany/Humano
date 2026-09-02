@@ -1,0 +1,13 @@
+<!--
+  SAN & CO. — ícone PLACEHOLDER: Agenda
+  >>> SUBSTITUA POR SEU PRÓPRIO ARQUIVO, mantendo o nome "agenda.svg".
+  Mesmas regras: viewBox 0 0 24 24; a cor é aplicada por CSS (mask-image).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+     stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/>
+  <line x1="3.5" y1="10" x2="20.5" y2="10"/>
+  <line x1="8.5" y1="3" x2="8.5" y2="6.5"/>
+  <line x1="15.5" y1="3" x2="15.5" y2="6.5"/>
+  <circle cx="8.5" cy="14.5" r="1.4" fill="#FFFFFF" stroke="none"/>
+</svg>

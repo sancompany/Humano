@@ -1,0 +1,22 @@
+{
+  "name": "san-and-co-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend do SAN & CO. — Miriel (Gemini), Suíte Google (Drive/Gmail/Agenda) e Supabase (financasRepo.js/mcpTools.js); Pluggy ainda pendente.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "autorizar-google": "node scripts/autorizar-google.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "googleapis": "latest"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

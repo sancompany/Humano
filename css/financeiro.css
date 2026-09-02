@@ -1,0 +1,1444 @@
+/* ============================================================
+   SAN & CO. — css/financeiro.css
+   Tela de Finanças: cabeçalho, sub-navegação, filtros, KPIs,
+   cartões, extrato, aba de detalhamento e importação .OFX.
+   Fatiado do style.css monolítico: nenhum seletor, classe, id,
+   animação ou variável foi renomeado ou removido.
+   ============================================================ */
+
+/* ---------- 11. MÓDULO FINANCEIRO --------------------------- */
+
+/* --- cabeçalho da view com ação de topo --- */
+.fin-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+.fin-head__texto { flex: 1 1 auto; min-width: 0; }
+
+/* tela estreita: as ações descem para a própria linha em vez de comprimir
+   o título até ele quebrar */
+@media (max-width: 430px) {
+  .fin-head__texto { flex: 1 1 100%; }
+  .fin-head__acoes { flex: 1 1 100%; justify-content: flex-start; }
+}
+
+.btn-lancar {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 9px 15px;
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-sm);
+  background: var(--gold-dim);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transition: border-color var(--fast) var(--ease),
+              background-color var(--fast) var(--ease),
+              transform var(--fast) var(--ease);
+}
+/* a cruz é desenhada, não é texto: alinha certo em qualquer fonte */
+.btn-lancar__cruz {
+  position: relative;
+  width: 11px;
+  height: 11px;
+}
+.btn-lancar__cruz::before,
+.btn-lancar__cruz::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: currentColor;
+}
+.btn-lancar__cruz::before { width: 11px; height: 1.5px; }
+.btn-lancar__cruz::after  { width: 1.5px; height: 11px; }
+
+@media (hover: hover) {
+  .btn-lancar:hover {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.22);
+  }
+}
+.btn-lancar:active { transform: scale(0.97); }
+
+/* --- sub-navegação de Finanças: Fluxo | Patrimônio --- */
+.sub-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;         /* 4 abas + tela estreita: rola em vez de quebrar */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.sub-nav::-webkit-scrollbar { display: none; }
+.sub-nav__btn {
+  position: relative;
+  padding: 10px 2px 12px;
+  margin-right: 22px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color var(--fast) var(--ease);
+}
+/* fio dourado sob a sub-tela ativa — mesmo idioma do trilho da barra inferior */
+.sub-nav__btn::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold-glow);
+  transform: scaleX(0);
+  transition: transform var(--base) var(--ease);
+}
+.sub-nav__btn[aria-current="page"] { color: var(--gold); }
+.sub-nav__btn[aria-current="page"]::after { transform: scaleX(1); }
+@media (hover: hover) {
+  .sub-nav__btn:hover { color: var(--muted-hi); }
+  .sub-nav__btn[aria-current="page"]:hover { color: var(--gold); }
+}
+
+/* ações do cabeçalho: troca de perfil + lançar */
+.fin-head__acoes {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+/* --- barra de filtros do extrato --- */
+.fin-controles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.lentes {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.lentes__btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transition: color var(--fast) var(--ease),
+              background-color var(--fast) var(--ease),
+              box-shadow var(--base) var(--ease);
+}
+.lentes__btn[aria-pressed="true"] {
+  background: var(--azul-dim);
+  color: var(--azul);
+  box-shadow: 0 0 14px rgba(30, 111, 184, 0.18),
+              inset 0 0 0 1px var(--azul-line);
+}
+@media (hover: hover) {
+  .lentes__btn:hover { color: var(--muted-hi); }
+  .lentes__btn[aria-pressed="true"]:hover { color: var(--azul); }
+}
+
+.troca-perfil {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--muted);
+  transition: border-color var(--fast) var(--ease),
+              color var(--fast) var(--ease),
+              transform var(--fast) var(--ease);
+}
+.troca-perfil svg { width: 19px; height: 19px; }
+.troca-perfil__badge {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  padding: 2px 5px;
+  border: 1px solid var(--azul-line);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--azul);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+}
+@media (hover: hover) {
+  .troca-perfil:hover { border-color: var(--azul-line); color: var(--azul); }
+}
+.troca-perfil:active { transform: scale(0.94) rotate(-8deg); }
+
+/* --- grid de cards --- */
+.fin-cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 620px) {
+  /* o card de fluxo é o herói: ocupa a linha inteira */
+  .fin-cards { grid-template-columns: 1fr 1fr; }
+  .card-exec--destaque { grid-column: 1 / -1; }
+}
+
+.card-exec {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;   /* sem isto, o flex não deixa o ellipsis do valor funcionar */
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--fast) var(--ease),
+              background-color var(--fast) var(--ease),
+              transform var(--fast) var(--ease);
+}
+.card-exec--destaque {
+  /* fio dourado no topo, único destaque do bloco */
+  background:
+    linear-gradient(90deg, var(--gold-line), rgba(212, 175, 55, 0) 55%) top left / 100% 1px no-repeat,
+    var(--surface);
+}
+
+.card-exec__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.card-exec__label {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.card-exec__tag {
+  padding: 3px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--muted-dim);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.card-exec__valor {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  /* o placeholder R$ ---.---,-- nunca pode quebrar a vírgula pra linha de
+     baixo — nem o valor real, por mais longo que seja */
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.card-exec--destaque .card-exec__valor { font-size: 34px; }
+/* NÚMERO GRANDE: sempre branco. Alto contraste e elegância — a cor de
+   estado vai para a faixa logo abaixo, não para o algarismo.
+   Números pequenos (badges, extrato, rentabilidade) seguem coloridos no
+   próprio texto: ali a cor é o único sinal disponível. */
+.card-exec__valor { color: var(--text); }
+
+/* faixa indicadora sob o valor */
+.card-exec__faixa {
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin-top: 10px;
+  border-radius: 2px;
+  transition: background-color var(--base) var(--ease), width var(--base) var(--ease);
+}
+.card-exec--destaque .card-exec__faixa { width: 60px; }
+
+.card-exec__faixa--positivo { background: var(--success); box-shadow: 0 0 10px rgba(16, 185, 129, 0.45); }
+.card-exec__faixa--negativo { background: var(--danger);  box-shadow: 0 0 10px rgba(239, 68, 68, 0.45); }
+.card-exec__faixa--atencao  { background: var(--warn);    box-shadow: 0 0 10px rgba(245, 158, 11, 0.45); }
+.card-exec__faixa--neutro   { background: var(--info);    box-shadow: 0 0 10px rgba(59, 130, 246, 0.45); }
+
+.card-exec__sub {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.card-exec__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 14px;
+  color: var(--muted-dim);
+  font-size: 12px;
+}
+.card-exec__rodape > :first-child { padding-top: 0; }
+.card-exec__ref {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.card-exec__ref--estimado { color: var(--info); }
+
+/* percentual do limite comprometido */
+.card-exec__uso {
+  margin-top: 10px;
+  color: var(--warn);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.card-exec__uso--alerta { color: var(--danger); }
+
+/* aviso de dado que só a Pluggy entrega — discreto, não é erro */
+.card-exec__aviso {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  color: var(--muted-dim);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* pulso curto quando o valor troca por causa da lente ou do perfil */
+.valor--pulso { animation: pulsoValor var(--slow) var(--ease) both; }
+@keyframes pulsoValor {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- badge de variação percentual --- */
+.variacao {
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* "boa" e "ruim", não "sobe" e "desce": subir gasto não é bom */
+.variacao--boa  { background: rgba(16, 185, 129, 0.12); color: var(--success); }
+.variacao--ruim { background: rgba(239, 68, 68, 0.12);  color: var(--danger); }
+
+/* --- barra de consumo dos cartões --- */
+.barra-consumo {
+  height: 6px;
+  margin-top: 16px;
+  border-radius: 3px;
+  background: var(--surface-well);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+.barra-consumo__usado { display: flex; height: 100%; gap: 1px; }
+/* a cor de cada fatia é a da marca do emissor, aplicada inline pelo módulo
+   (ver js/bancos.js) — roxo Nubank, laranja Inter, e por aí vai */
+.barra-consumo__parte { min-width: 3px; transition: background-color var(--base) var(--ease); }
+
+/* passou do teto: a barra inteira ganha um halo de alerta, sem apagar a
+   identidade de cada banco */
+.barra-consumo--alerta {
+  box-shadow: inset 0 0 0 1px var(--danger), 0 0 10px rgba(239, 68, 68, 0.35);
+}
+
+.legenda { margin-top: 14px; display: grid; gap: 7px; }
+.legenda__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+}
+.legenda__ponto {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+.legenda__nome  { flex: 1 1 auto; font-weight: 500; }
+.legenda__valor { color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* --- projeção --- */
+.projecao { margin-top: 16px; display: grid; gap: 8px; }
+.projecao__linha {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+}
+.projecao__prazo { color: var(--muted); }
+.projecao__valor {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.projecao__valor--sobe  { color: var(--success); }
+.projecao__valor--desce { color: var(--danger); }
+
+/* --- extrato --- */
+.extrato { display: grid; gap: 8px; }
+.extrato__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--fast) var(--ease),
+              background-color var(--fast) var(--ease),
+              transform var(--fast) var(--ease);
+}
+.extrato__data {
+  flex: 0 0 46px;
+  color: var(--muted-dim);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.extrato__corpo {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-start;
+}
+.extrato__desc {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.extrato__valor {
+  flex: 0 0 auto;
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* dinheiro realizado: verde entra, vermelho sai */
+.extrato__valor--entrada { color: var(--success); }
+.extrato__valor--saida   { color: var(--danger); }
+
+.extrato__vazio {
+  padding: 28px 20px;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.badge-status {
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.badge-status--liquidado { background: rgba(16, 185, 129, 0.12); color: var(--success); }
+.badge-status--pendente  { background: rgba(245, 158, 11, 0.12); color: var(--warn); }
+
+/* --- regra do tudo clicável --- */
+[data-clickable="true"] {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) {
+  .card-exec[data-clickable="true"]:hover,
+  .extrato__item[data-clickable="true"]:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-hi);
+  }
+}
+/* feedback tátil: o toque afunda o elemento */
+.card-exec[data-clickable="true"]:active,
+.extrato__item[data-clickable="true"]:active {
+  transform: scale(0.988);
+  border-color: var(--gold-line);
+}
+
+/* ---------- 13. ABA DE DETALHAMENTO -------------------------- */
+
+.detalhe__titulo {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* dois grupos de filtro: fluxo e granularidade */
+.detalhe__controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.detalhe__controles .lentes__btn { padding: 7px 13px; font-size: 12.5px; }
+
+/* --- navegador de mês: [ ‹  Agosto de 2026  › ] --- */
+.nav-mes {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 180px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.nav-mes__seta {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  transition: color var(--fast) var(--ease), background-color var(--fast) var(--ease);
+}
+@media (hover: hover) {
+  .nav-mes__seta:not(:disabled):hover { color: var(--azul); background: var(--azul-dim); }
+}
+.nav-mes__seta:disabled { color: var(--muted-dim); cursor: not-allowed; }
+.nav-mes__rotulo {
+  flex: 1 1 auto;
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* --- pílulas de atalho rápido --- */
+.atalhos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.atalhos__btn {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color var(--fast) var(--ease),
+              background-color var(--fast) var(--ease),
+              border-color var(--fast) var(--ease);
+}
+.atalhos__btn[aria-pressed="true"] {
+  border-color: var(--azul-line);
+  background: var(--azul-dim);
+  color: var(--azul);
+}
+@media (hover: hover) {
+  .atalhos__btn:hover { color: var(--muted-hi); border-color: var(--border-strong); }
+  .atalhos__btn[aria-pressed="true"]:hover { color: var(--azul); }
+}
+
+/* --- período personalizado: De / Até --- */
+.intervalo-custom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.intervalo-custom[hidden] { display: none; }
+.intervalo-custom__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 140px;
+}
+.intervalo-custom__campo span {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.intervalo-custom__campo input[type="date"] {
+  padding: 9px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-well);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  color-scheme: dark;
+}
+.intervalo-custom__campo input[type="date"]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* --- busca textual do extrato --- */
+.busca-extrato {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--fast) var(--ease);
+}
+.busca-extrato:focus-within { border-color: var(--gold-line); }
+.busca-extrato svg { flex: 0 0 auto; width: 16px; height: 16px; color: var(--muted-dim); }
+.busca-extrato input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 13.5px;
+}
+.busca-extrato input::placeholder { color: var(--muted-dim); }
+.busca-extrato input::-webkit-search-cancel-button { cursor: pointer; }
+
+/* --- badge de categoria e marca do banco no extrato --- */
+.extrato__badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.badge-categoria {
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.extrato__marca {
+  flex: 0 0 3px;
+  align-self: stretch;
+  border-radius: 2px;
+}
+
+/* --- tela de detalhe de uma transação --- */
+.transacao-detalhe {
+  padding: 22px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+}
+.transacao-detalhe__valor {
+  font-size: 30px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.transacao-detalhe__desc {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.transacao-detalhe__grade {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 24px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+.transacao-detalhe__grade dt {
+  color: var(--muted-dim);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.transacao-detalhe__grade dd {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 13.5px;
+}
+.transacao-detalhe__acoes {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+.transacao-detalhe__nota {
+  margin-top: 12px;
+  color: var(--muted-dim);
+  font-size: 11.5px;
+}
+
+/* ---------- BARRA DE CONTAS CONECTADAS (visão geral) ---------- */
+
+.contas {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 4px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.conta {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 132px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--marca, var(--border-strong));
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.conta--vazia {
+  border-left-color: var(--border-strong);
+  color: var(--muted);
+}
+.conta__nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.conta__saldo {
+  color: var(--text);
+  font-size: 14.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* --- visão [Dias]: um bloco por dia --- */
+.periodo + .periodo { margin-top: 22px; }
+.periodo__topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.periodo__rotulo {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.periodo__saldo {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.periodo__saldo--sobe  { color: var(--success); }
+.periodo__saldo--desce { color: var(--danger); }
+
+/* --- visão [Mês] e [Ano]: comparativo com barras --- */
+.consolidado { display: grid; gap: 12px; }
+.consolidado__item {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.consolidado__topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.consolidado__rotulo { font-size: 15px; font-weight: 500; }
+.consolidado__saldo {
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.consolidado__barras { display: grid; gap: 8px; }
+.consolidado__linha {
+  display: grid;
+  grid-template-columns: 62px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+.consolidado__legenda {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.consolidado__trilho {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-well);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+.consolidado__barra {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  transition: width var(--slow) var(--ease);
+}
+.consolidado__barra--entrada { background: var(--success); }
+.consolidado__barra--saida   { background: var(--danger); }
+.consolidado__numero {
+  color: var(--text);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.consolidado__contagem {
+  margin-top: 12px;
+  color: var(--muted-dim);
+  font-size: 11.5px;
+}
+
+/* --- contexto Faturas: uma por cartão, com a cor do emissor --- */
+.fatura + .fatura { margin-top: 20px; }
+.fatura__topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--surface);
+}
+.fatura__banco { font-size: 15px; font-weight: 600; }
+.fatura__rotulo {
+  margin-top: 2px;
+  color: var(--muted-dim);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fatura__total {
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.fatura__resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-top: 0;
+  background: var(--surface-well);
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.fatura__resumo strong { font-variant-numeric: tabular-nums; }
+.fatura .extrato { margin-top: 10px; }
+
+/* ---------- 14. IMPORTAÇÃO .OFX ----------------------------- */
+
+.dropzone {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--fast) var(--ease),
+              background-color var(--fast) var(--ease);
+}
+.dropzone[data-ativo="sim"] {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+}
+@media (hover: hover) {
+  .dropzone:hover { border-color: var(--gold-line); }
+}
+
+/* seta para baixo desenhada, sem depender de fonte de ícone */
+.dropzone__icone {
+  position: relative;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--gold);
+}
+.dropzone__icone::before {
+  content: "";
+  position: absolute;
+  left: 8px; top: 0;
+  width: 2px; height: 12px;
+  background: currentColor;
+}
+.dropzone__icone::after {
+  content: "";
+  position: absolute;
+  left: 3px; top: 6px;
+  width: 9px; height: 9px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* o input fica oculto pelo atributo hidden; a classe existe para quem
+   precisar mirá-lo em teste ou script */
+.dropzone__input { display: none; }
+
+.dropzone__texto { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.dropzone__texto strong { font-size: 13.5px; font-weight: 500; }
+.dropzone__dica { color: var(--muted); font-size: 12px; }
+
+.dropzone__retorno {
+  margin: -4px 0 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.dropzone__retorno[data-tom="ok"]   { color: var(--success); }
+.dropzone__retorno[data-tom="erro"] { color: var(--danger); }
+
+/* ---------- OVERVIEW ------------------------------------------ */
+
+/* --- card/lista de contas: saldo no topo, uma linha por instituição —
+   usado tanto no card resumido da Overview quanto na tela de detalhe
+   dedicada (detalhe.js), que acrescenta o estado de filtro ativo --- */
+.conta-lista { margin-top: 14px; display: grid; gap: 2px; }
+.conta-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 6px;
+  border-left: 2px solid var(--marca, transparent);
+  border-radius: 6px;
+  transition: background-color var(--fast) var(--ease);
+}
+@media (hover: hover) {
+  .conta-linha[data-clickable="true"]:hover { background: rgba(255, 255, 255, 0.03); }
+}
+/* a conta com o filtro ativo, na tela de detalhe */
+.conta-linha--ativa {
+  background: rgba(30, 111, 184, 0.08);
+  box-shadow: inset 0 0 0 1px var(--azul-line);
+}
+.conta-linha__nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-size: 13px;
+}
+.conta-linha__saldo {
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.conta-linha--vazia {
+  border-left-color: transparent;
+  color: var(--muted-dim);
+  font-size: 12.5px;
+}
+
+/* --- card do gráfico: mais alto que os cards comuns, sem o rodapé padrão --- */
+.card-exec--grafico { padding-bottom: 8px; }
+.card-exec--grafico .card-exec__valor { font-size: 30px; }
+
+.grafico-evolucao { margin-top: 14px; }
+.grafico-evolucao svg { display: block; width: 100%; height: auto; }
+.grafico-evolucao__eixo {
+  fill: var(--muted-dim);
+  font-size: 9px;
+  font-family: inherit;
+  text-anchor: middle;
+}
+
+/* ---------- CONEXÕES --------------------------- */
+
+.conexoes-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.conexoes-cabecalho__titulo { font-size: 19px; font-weight: 600; }
+.conexoes-cabecalho .btn--gold { flex: 0 0 auto; white-space: nowrap; }
+
+.conexoes-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.conexao-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--fast) var(--ease);
+}
+@media (hover: hover) {
+  .conexao-card:hover { border-color: var(--border-strong); }
+}
+.conexao-card__topo { display: flex; align-items: center; justify-content: space-between; }
+.conexao-card__logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+}
+.conexao-card__status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+}
+.conexao-card__status--alerta { background: var(--danger); }
+
+.conexao-card__nome { margin-top: 14px; font-size: 15px; font-weight: 600; }
+.conexao-card__momento { margin-top: 2px; color: var(--muted-dim); font-size: 11.5px; }
+
+.conexao-card .consentimento { margin-top: 14px; }
+.conexao-card .consentimento__texto { margin-top: 6px; font-size: 11px; }
+
+.conexao-card__link {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  width: 100%;
+  color: var(--muted);
+  font-size: 12px;
+  transition: color var(--fast) var(--ease);
+}
+@media (hover: hover) {
+  .conexao-card__link:hover { color: var(--gold); }
+}
+
+/* --- contador de consentimento (base 365 dias) — usado dentro do card --- */
+.consentimento { display: block; }
+.consentimento__barra {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-well);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+.consentimento__preenchido {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  transition: width var(--slow) var(--ease), background-color var(--base) var(--ease);
+}
+.consentimento__texto { color: var(--muted); font-size: 12px; }
+.consentimento__selo {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--info);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* verde tranquilo, amarelo renove logo, vermelho urgente, azul contínuo */
+.consentimento--ok .consentimento__preenchido        { background: var(--success); }
+.consentimento--atencao .consentimento__preenchido   { background: var(--warn); }
+.consentimento--urgente .consentimento__preenchido   { background: var(--danger); }
+.consentimento--continuo .consentimento__preenchido  { background: var(--info); }
+
+/* --- agentes com acesso de leitura (equivalente a "Apps Parceiros") --- */
+.agentes-acesso { display: grid; gap: 8px; }
+.agentes-acesso__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.agentes-acesso__ponto {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.agentes-acesso__nome {
+  flex: 1 1 auto;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ---------- TELAS DE DETALHE: CONTAS E EVOLUÇÃO ---------------- */
+
+/* --- "Mostrando só Banco X · Ver todas" --- */
+/* nota honesta quando a tela mostra menos do que o card prometia
+   (ex.: Projeção — só temos 7d/30d, não a composição inteira) */
+.detalhe__nota-tecnica {
+  margin-top: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--muted-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.detalhe__filtro-ativo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.detalhe__filtro-ativo button {
+  color: var(--azul);
+  font-size: 12.5px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* --- lista mês a mês da tela de Evolução --- */
+.evolucao-lista { display: grid; gap: 1px; }
+.evolucao-linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 6px;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.evolucao-linha--cabecalho {
+  color: var(--muted-dim);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.evolucao-linha:not(.evolucao-linha--cabecalho) { border-top: 1px solid var(--border); }
+.evolucao-linha__mes { color: var(--muted); }
+.evolucao-linha__delta { text-align: right; }
+.evolucao-linha__saldo { text-align: right; color: var(--text); font-weight: 500; }
+
+/* ---------- PROJETOS (auto-provisionamento via checkout Asaas) -------- */
+
+/* --- seletor de escopo: Pessoal vs Comercial, independente do PF/PJ --- */
+.escopo-seletor {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-well);
+}
+.escopo-seletor__btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color var(--fast) var(--ease), background-color var(--fast) var(--ease);
+}
+.escopo-seletor__btn.is-ativo {
+  background: var(--azul-dim);
+  color: var(--azul);
+  box-shadow: inset 0 0 0 1px var(--azul-line);
+}
+@media (hover: hover) {
+  .escopo-seletor__btn:not(.is-ativo):hover { color: var(--muted-hi); }
+}
+.escopo-seletor__conta {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+.escopo-seletor__btn.is-ativo .escopo-seletor__conta { background: rgba(30, 111, 184, 0.22); }
+
+/* --- barra de filtros de status + botão de vincular --- */
+.projetos-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.lentes__conta {
+  margin-left: 4px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* --- grade de cards --- */
+.projetos-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.projeto-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+@media (hover: hover) {
+  .projeto-card[data-clickable="true"]:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+}
+
+.projeto-card__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.projeto-card__nome { color: var(--text); font-size: 14.5px; font-weight: 600; }
+.projeto-card__categoria { margin-top: 2px; color: var(--muted-dim); font-size: 11px; }
+.projeto-card__status {
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--status) 16%, transparent);
+  color: var(--status);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.projeto-card__faturamento { margin-top: 14px; color: var(--text); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.projeto-card__sub { margin-top: 1px; color: var(--muted-dim); font-size: 10.5px; }
+
+.projeto-card__grade {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.projeto-card__grade div { display: flex; flex-direction: column; gap: 2px; }
+.projeto-card__grade span { color: var(--muted-dim); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.projeto-card__grade strong { color: var(--text); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+
+/* --- sparkline de 6 meses, barras puras em CSS --- */
+.projeto-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 32px;
+  margin-top: 14px;
+}
+.projeto-sparkline__barra {
+  flex: 1 1 0;
+  border-radius: 2px 2px 0 0;
+  background: var(--info);
+  opacity: 0.7;
+  min-height: 2px;
+}
+.projeto-card__sem-historico { margin-top: 14px; color: var(--muted-dim); font-size: 11px; }
+
+.projeto-card__diagnostico {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+/* ---------- CATEGORIZAÇÃO DE GASTOS ---------------------------- */
+
+/* dois blocos empilhados no card de Fluxo: Despesas (liquidado) e
+   Despesas futuras (pendente) — cada bloco é um .card-exec normal, então
+   herda padding/borda/hover de lá; aqui só o espaçamento entre os dois */
+.categoria-blocos {
+  display: grid;
+  gap: 12px;
+}
+
+.categoria-lista { margin-top: 14px; display: grid; gap: 12px; }
+/* na tela dedicada as linhas ficam um pouco mais espaçadas — mais
+   confortável para tocar quando cada uma é o próprio alvo do clique */
+.categoria-lista--detalhe { gap: 14px; }
+
+.categoria-linha {
+  display: block;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background-color var(--fast) var(--ease);
+}
+@media (hover: hover) {
+  .categoria-linha[data-clickable="true"]:hover { background: rgba(255, 255, 255, 0.03); }
+}
+/* categoria com o filtro ativo, na tela de detalhe — mesmo tratamento
+   visual que .conta-linha--ativa já usa para Contas */
+.categoria-linha--ativa {
+  background: rgba(30, 111, 184, 0.08);
+  box-shadow: inset 0 0 0 1px var(--azul-line);
+}
+.categoria-linha--vazia {
+  padding: 12px 6px;
+  color: var(--muted-dim);
+  font-size: 12.5px;
+  text-align: left;
+}
+
+.categoria-linha__topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.categoria-linha__nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-size: 13px;
+}
+.categoria-linha__valor {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.categoria-linha__trilho {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--surface-well);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+/* a barra usa a mesma cor de alerta do fluxo — "gasto" é sempre vermelho,
+   proporcional à maior categoria do bloco, nunca ao total geral */
+.categoria-linha__barra {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--danger);
+  opacity: 0.75;
+  transition: width var(--slow) var(--ease);
+}
+
+/* cabeçalho dos blocos na tela dedicada: título à esquerda, total à direita
+   — mesma leitura do .card-exec__topo, só que fora de um card */
+.categoria-bloco__topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.categoria-bloco__total {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.categoria-bloco__sub {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+/* ---------- GAVETA "+ NOVA CONEXÃO" ----------------------------- */
+
+.banco-lista { margin-top: 4px; display: grid; gap: 2px; max-height: 320px; overflow-y: auto; }
+.banco-lista__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-left: 2px solid var(--marca, transparent);
+  border-radius: 6px;
+  transition: background-color var(--fast) var(--ease);
+}
+@media (hover: hover) {
+  .banco-lista__item:hover { background: rgba(255, 255, 255, 0.03); }
+}
+.banco-lista__logo {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--marca, var(--border-strong));
+}
+.banco-lista__nome {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-size: 13.5px;
+}
+.banco-lista__seta {
+  flex: 0 0 auto;
+  color: var(--muted-dim);
+}

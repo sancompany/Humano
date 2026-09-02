@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="sistema">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0C">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="HUMANO — painel executivo pessoal de finanças, patrimônio, IAs e agenda.">
+
+  <!-- aplica o tema salvo ANTES da primeira pintura — sem isto, a página
+       sempre nasce no tema Sistema por uma fração de segundo e "pisca"
+       pro tema escolhido depois que config.js carrega. Script inline,
+       síncrono, de propósito: tem que rodar antes do <body> começar a
+       ser desenhado. -->
+  <script>
+    try {
+      var t = localStorage.getItem('humano:tema');
+      if (t === 'escuro' || t === 'claro') document.documentElement.dataset.tema = t;
+      // 'sistema' já é o padrão escrito na tag <html> — nada a fazer
+    } catch (e) { /* modo privado, sem storage — nasce no tema padrão (Sistema) */ }
+  </script>
+
+  <!-- ícone da aba do navegador — a cruz dourada original, não a logo nova
+       (a logo HUMANO fica só dentro do app, no cabeçalho) -->
+  <link rel="icon" href="assets/logo/logo-sanco.svg" type="image/svg+xml">
+
+  <!-- PWA: descomente quando o manifest.json e o service worker estiverem prontos.
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/logo/icon-180.png">
+  -->
+
+  <title>HUMANO</title>
+  <!-- ORDEM IMPORTA: investimentos.css precisa vir depois de financeiro.css
+       (.fin-cards--tres e .fin-cards têm a mesma especificidade) -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/financeiro.css">
+  <link rel="stylesheet" href="css/investimentos.css">
+  <link rel="stylesheet" href="css/config.css">
+  <link rel="stylesheet" href="css/panteao.css">
+  <link rel="stylesheet" href="css/agenda.css">
+</head>
+
+<body>
+  <!-- ==========================================================
+       TOPO FIXO
+       O status é atualizado por qualquer módulo com:
+       document.dispatchEvent(new CustomEvent('sanco:status', {
+         detail: { label: 'Sincronizando', tone: 'pending' }
+       }));
+       tone aceita: secure | pending | offline
+       ========================================================== -->
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="logo" href="#/financas" aria-label="HUMANO — início">
+        <img class="logo__mark" src="assets/logo/logo-humano.png" alt="" width="26" height="26">
+        <span class="logo__text">HUMANO</span>
+      </a>
+
+      <div class="status" id="app-status" data-tone="secure">
+        <span class="status__dot" aria-hidden="true"></span>
+        <span class="status__label" id="app-status-label">Sessão ativa</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================
+       CONTAINER CENTRAL — o módulo ativo é renderizado aqui.
+       Nunca escreva conteúdo fixo dentro dele: o roteador limpa
+       tudo a cada troca de tela.
+       ========================================================== -->
+  <main class="app-content" id="app-content"></main>
+
+  <!-- ==========================================================
+       BARRA INFERIOR FIXA
+       Os ícones vêm de assets/icons/, um por item, indicado no atributo
+       data-icon (só o nome do arquivo). O app.js resolve isso para uma URL
+       absoluta em tempo de execução (new URL(...).href) e escreve o
+       resultado na variável --icon de cada item.
+
+       NÃO volte a escrever url('assets/icons/x.svg') nem url('/assets/...')
+       direto no style: --icon é consumida por um mask() que mora em css/, e
+       o caminho dentro de uma custom property resolve a partir de ONDE ELA
+       É USADA (o CSS), não de onde foi declarada (aqui). Um caminho relativo
+       quebra por causa disso; um caminho absoluto com barra na frente quebra
+       toda vez que o projeto for servido de uma subpasta (já aconteceu com
+       san-and-co/ na raiz do Live Server, e vai acontecer de novo em outro
+       ambiente). Resolver em JS contra document.baseURI é a única forma que
+       não depende de profundidade de pasta nenhuma.
+
+       São coloridos por CSS (mask-image): cinza quando inativos, dourado
+       quando ativos.
+       ========================================================== -->
+  <nav class="app-nav" id="app-nav" aria-label="Navegação principal">
+    <div class="app-nav__inner">
+      <!-- trilho dourado que desliza para a aba ativa -->
+      <span class="app-nav__rail" aria-hidden="true"></span>
+
+      <a class="nav-item" href="#/financas" data-route="financas" data-icon="finance.svg">
+        <span class="nav-item__icon" aria-hidden="true"></span>
+        <span class="nav-item__label">Finanças</span>
+      </a>
+
+      <a class="nav-item" href="#/panteao" data-route="panteao" data-icon="panteao.svg">
+        <span class="nav-item__icon" aria-hidden="true"></span>
+        <span class="nav-item__label">Panteão</span>
+      </a>
+
+      <a class="nav-item" href="#/agenda" data-route="agenda" data-icon="agenda.svg">
+        <span class="nav-item__icon" aria-hidden="true"></span>
+        <span class="nav-item__label">Rotina</span>
+      </a>
+
+      <a class="nav-item" href="#/ajustes" data-route="ajustes" data-icon="config.svg">
+        <span class="nav-item__icon" aria-hidden="true"></span>
+        <span class="nav-item__label">Configuração</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ES Modules exigem type="module" e um servidor local (não abra por file://) -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

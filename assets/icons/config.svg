@@ -1,0 +1,14 @@
+<!--
+  SAN & CO. — ícone PLACEHOLDER: Ajustes (faders / controles)
+  >>> SUBSTITUA POR SEU PRÓPRIO ARQUIVO, mantendo o nome "config.svg".
+  Mesmas regras: viewBox 0 0 24 24; a cor é aplicada por CSS (mask-image).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+     stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="3.5" y1="8.5" x2="11.5" y2="8.5"/>
+  <line x1="16.5" y1="8.5" x2="20.5" y2="8.5"/>
+  <circle cx="14" cy="8.5" r="2.5"/>
+  <line x1="3.5" y1="15.5" x2="6.5" y2="15.5"/>
+  <line x1="11.5" y1="15.5" x2="20.5" y2="15.5"/>
+  <circle cx="9" cy="15.5" r="2.5"/>
+</svg>

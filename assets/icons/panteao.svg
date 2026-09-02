@@ -1,0 +1,12 @@
+<!--
+  SAN & CO. — ícone PLACEHOLDER: Panteão de IAs (constelação de 3 pontos)
+  >>> SUBSTITUA POR SEU PRÓPRIO ARQUIVO, mantendo o nome "panteao.svg".
+  Mesmas regras: viewBox 0 0 24 24; a cor é aplicada por CSS (mask-image).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+     stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="6.5 17 12 6 17.5 14.5 6.5 17"/>
+  <circle cx="12" cy="6" r="1.9" fill="#FFFFFF" stroke="none"/>
+  <circle cx="6.5" cy="17" r="1.7" fill="#FFFFFF" stroke="none"/>
+  <circle cx="17.5" cy="14.5" r="1.7" fill="#FFFFFF" stroke="none"/>
+</svg>

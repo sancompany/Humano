@@ -1,0 +1,22 @@
+<!--
+  SAN & CO. — brasão (versão vetorial)
+  Reconstrução geométrica do logo.png enviado pelo usuário.
+  Medidas tiradas do original (612x612, disco de raio 274px), normalizadas
+  para um viewBox de 100x100 com o disco em raio 48:
+      meia-largura da haste ....... 0,195 R
+      início do alargamento ....... 0,547 R
+      ponta do braço .............. 0,810 R
+      meia-largura da ponta ....... 0,310 R
+  O aro dourado do original é desgastado/pontilhado; aqui virou um aro
+  limpo em #D4AF37, que é o que se enxerga nos tamanhos usados no app.
+  Cores: disco #000000 · cruz #B91B00 · aro #D4AF37
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Brasão SAN &amp; CO.">
+  <circle cx="50" cy="50" r="48" fill="#000000"/>
+  <circle cx="50" cy="50" r="47.4" fill="none" stroke="#D4AF37" stroke-width="1.2" opacity="0.9"/>
+  <path fill="#B91B00" d="M35.1 11.1
+    L64.9 11.1 L59.4 23.7 L59.4 40.6 L76.3 40.6 L88.9 35.1
+    L88.9 64.9 L76.3 59.4 L59.4 59.4 L59.4 76.3 L64.9 88.9
+    L35.1 88.9 L40.6 76.3 L40.6 59.4 L23.7 59.4 L11.1 64.9
+    L11.1 35.1 L23.7 40.6 L40.6 40.6 L40.6 23.7 Z"/>
+</svg>
